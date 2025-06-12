@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Portfolio Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #010208 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .view-portfolio {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .view-portfolio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.4);
+        }
+        
+        .admin-section {
+            background: rgba(255,255,255,0.95);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid transparent;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 10px 20px rgba(229, 62, 62, 0.4);
+        }
+        
+        .projects-list {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .project-item,
+        .price-item {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .project-item h4,
+        .price-item h4 {
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .tech-tag {
+            background: linear-gradient(135deg, #020616, #764ba2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .price-display {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .feedback-section {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .feedback-item {
+            background: #f7fafc;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feedback-name {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .feedback-date {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .feedback-email {
+            font-size: 0.9rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .success-message {
+            background: #f0fff4;
+            color: #38a169;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #9ae6b4;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .admin-section {
+                padding: 1rem;
+            }
+            
+            .item-actions {
+                position: static;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">Admin Panel</div>
+                <a href="portfolio.html" class="view-portfolio" target="_blank">View Portfolio</a>
+            </div>
+        </header>
+
+        <!-- About Section Management -->
+        <section class="admin-section">
+            <h2 class="section-title">About Section</h2>
+            <div class="success-message" id="aboutSuccess">About section updated successfully!</div>
+            <form id="aboutForm">
+                <div class="form-group">
+                    <label for="aboutContent">About Content (HTML allowed)</label>
+                    <textarea id="aboutContent" rows="8" placeholder="Enter your about content here..."></textarea>
+                </div>
+                <button type="submit" class="btn">Update About</button>
+            </form>
+        </section>
+
+        <!-- Projects Management -->
+        <section class="admin-section">
+            <h2 class="section-title">Projects Management</h2>
+            <div class="success-message" id="projectSuccess">Project updated successfully!</div>
+            <button type="button" class="btn" onclick="openProjectModal()">Add New Project</button>
+            <div id="projectsList" class="projects-list"></div>
+        </section>
+
+        <!-- Prices Management -->
+        <section class="admin-section">
+            <h2 class="section-title">Pricing Management</h2>
+            <div class="success-message" id="priceSuccess">Price updated successfully!</div>
+            <button type="button" class="btn" onclick="openPriceModal()">Add New Price</button>
+            <div id="pricesList" class="projects-list"></div>
+        </section>
+
+        <!-- Feedback Viewer -->
+        <section class="admin-section">
+            <h2 class="section-title">Feedback Received</h2>
+            <button type="button" class="btn btn-danger" onclick="clearAllFeedback()">Clear All Feedback</button>
+            <div id="feedbackList" class="feedback-section"></div>
+        </section>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProjectModal()">&times;</span>
+            <h3 id="projectModalTitle">Add New Project</h3>
+            <form id="projectForm">
+                <input type="hidden" id="projectIndex" value="">
+                <div class="form-group">
+                    <label for="projectTitle">Project Title</label>
+                    <input type="text" id="projectTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="projectTechnologies">Technologies (comma-separated)</label>
+                    <input type="text" id="projectTechnologies" placeholder="HTML, CSS, JavaScript" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectPrice">Price (in Rs.)</label>
+                    <input type="number" id="projectPrice" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectUrl">Project URL (optional)</label>
+                    <input type="url" id="projectUrl" placeholder="https://example.com">
+                </div>
+                <button type="submit" class="btn">Save Project</button>
+                <button type="button" class="btn btn-danger" onclick="closeProjectModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Price Modal -->
+    <div id="priceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePriceModal()">&times;</span>
+            <h3 id="priceModalTitle">Add New Price</h3>
+            <form id="priceForm">
+                <input type="hidden" id="priceIndex" value="">
+                <div class="form-group">
+                    <label for="priceTitle">Service Title</label>
+                    <input type="text" id="priceTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="priceAmount">Price (in Rs.)</label>
+                    <input type="number" id="priceAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="priceDescription">Description</label>
+                    <textarea id="priceDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="priceFeatures">Features (one per line)</label>
+                    <textarea id="priceFeatures" rows="4" placeholder="with beautiful images&#10;with GIFS&#10;with message&#10;with audio"></textarea>
+                </div>
+                <button type="submit" class="btn">Save Price</button>
+                <button type="button" class="btn btn-danger" onclick="closePriceModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Load existing data on page load
+        window.addEventListener('load', function() {
+            loadAboutContent();
+            loadProjects();
+            loadPrices();
+            loadFeedback();
+        });
+
+        // About Section Management
+        function loadAboutContent() {
+            const savedContent = localStorage.getItem('aboutContent');
+            if (savedContent) {
+                document.getElementById('aboutContent').value = JSON.parse(savedContent).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ');
+            }
+        }
+
+        document.getElementById('aboutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const content = document.getElementById('aboutContent').value;
+            const htmlContent = content.split('\n').map(paragraph => 
+                paragraph.trim() ? `<p>${paragraph.trim()}</p>` : ''
+            ).join('');
+            
+            localStorage.setItem('aboutContent', JSON.stringify(htmlContent));
+            showSuccessMessage('aboutSuccess');
+        });
+
+        // Projects Management
+        function loadProjects() {
+            const projects = JSON.parse(localStorage.getItem('projects')) || [];
+            const container = document.getElementById('projectsList');
+            
+            if (projects.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center; padding: 2rem;">No projects added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = projects.map((project, index) => `
+                <div class="project-item">
+                    <div class="item-actions">
+                        <button class="btn btn-small" onclick="editProject(${index})">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteProject(${index})">Delete</button>
+                    </div>
+                    <h4>${project.title}</h4>
+                    <p>${project.description}</p>
+                    <div class="tech-tags">
+                        ${project.technologies.split(',').map(tech => 
+                            `<span class="tech-tag">${tech.trim()}</span>`
+                        ).join('')}
+                    </div>
+                    <div class="price-display">${project.price} Rs.</div>
+                    ${project.url ? `<p style="margin-top: 0.5rem;"><a href="${project.url}" target="_blank" style="color: #667eea;">View Project</a></p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openProjectModal(index = null) {
+            const modal = document.getElementById('projectModal');
+            const form = document.getElementById('projectForm');
+            const title = document.getElementById('projectModalTitle');
+            
+            if (index !== null) {
+                const projects = JSON.parse(localStorage.getItem('projects')) || [];
+                const project = projects[index];
+                
+                document.getElementById('projectIndex').value = index;
+                document.getElementById('projectTitle').value = project.title;
+                document.getElementById('projectDescription').value = project.description;
+                document.getElementById('projectTechnologies').value = project.technologies;
+                document.getElementById('projectPrice').value = project.price;
+                document.getElementById('projectUrl').value = project.url || '';
+                title.textContent = 'Edit Project';
+            } else {
+                form.reset();
+                document.getElementById('projectIndex').value = '';
+                title.textContent = 'Add New Project';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').style.display = 'none';
+        }
+
+        function editProject(index) {
+            openProjectModal(index);
+        }
+
+        function deleteProject(index) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                const projects = JSON.parse(localStorage.getItem('projects')) || [];
+                projects.splice(index, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                loadProjects();
+                showSuccessMessage('projectSuccess');
+            }
+        }
+
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const projects = JSON.parse(localStorage.getItem('projects')) || [];
+            const index = document.getElementById('projectIndex').value;
+            
+            const projectData = {
+                title: document.getElementById('projectTitle').value,
+                description: document.getElementById('projectDescription').value,
+                technologies: document.getElementById('projectTechnologies').value,
+                price: document.getElementById('projectPrice').value,
+                url: document.getElementById('projectUrl').value
+            };
+            
+            if (index === '') {
+                projects.push(projectData);
+            } else {
+                projects[parseInt(index)] = projectData;
+            }
+            
+            localStorage.setItem('projects', JSON.stringify(projects));
+            closeProjectModal();
+            loadProjects();
+            showSuccessMessage('projectSuccess');
+        });
+
+        // Prices Management
+        function loadPrices() {
+            const prices = JSON.parse(localStorage.getItem('prices')) || [];
+            const container = document.getElementById('pricesList');
+            
+            if (prices.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center; padding: 2rem;">No pricing plans added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = prices.map((price, index) => `
+                <div class="price-item">
+                    <div class="item-actions">
+                        <button class="btn btn-small" onclick="editPrice(${index})">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deletePrice(${index})">Delete</button>
+                    </div>
+                    <h4>${price.title}</h4>
+                    <div class="price-display">${price.amount} Rs.</div>
+                    <p style="margin-top: 0.5rem;">${price.description}</p>
+                    ${price.features ? `
+                        <ul style="margin-top: 0.5rem; color: #718096;">
+                            ${price.features.split('\n').filter(f => f.trim()).map(feature => 
+                                `<li>${feature.trim()}</li>`
+                            ).join('')}
+                        </ul>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openPriceModal(index = null) {
+            const modal = document.getElementById('priceModal');
+            const form = document.getElementById('priceForm');
+            const title = document.getElementById('priceModalTitle');
+            
+            if (index !== null) {
+                const prices = JSON.parse(localStorage.getItem('prices')) || [];
+                const price = prices[index];
+                
+                document.getElementById('priceIndex').value = index;
+                document.getElementById('priceTitle').value = price.title;
+                document.getElementById('priceAmount').value = price.amount;
+                document.getElementById('priceDescription').value = price.description;
+                document.getElementById('priceFeatures').value = price.features || '';
+                title.textContent = 'Edit Price';
+            } else {
+                form.reset();
+                document.getElementById('priceIndex').value = '';
+                title.textContent = 'Add New Price';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closePriceModal() {
+            document.getElementById('priceModal').style.display = 'none';
+        }
+
+        function editPrice(index) {
+            openPriceModal(index);
+        }
+
+        function deletePrice(index) {
+            if (confirm('Are you sure you want to delete this pricing plan?')) {
+                const prices = JSON.parse(localStorage.getItem('prices')) || [];
+                prices.splice(index, 1);
+                localStorage.setItem('prices', JSON.stringify(prices));
+                loadPrices();
+                showSuccessMessage('priceSuccess');
+            }
+        }
+
+        document.getElementById('priceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const prices = JSON.parse(localStorage.getItem('prices')) || [];
+            const index = document.getElementById('priceIndex').value;
+            
+            const priceData = {
+                title: document.getElementById('priceTitle').value,
+                amount: document.getElementById('priceAmount').value,
+                description: document.getElementById('priceDescription').value,
+                features: document.getElementById('priceFeatures').value
+            };
+            
+            if (index === '') {
+                prices.push(priceData);
+            } else {
+                prices[parseInt(index)] = priceData;
+            }
+            
+            localStorage.setItem('prices', JSON.stringify(prices));
+            closePriceModal();
+            loadPrices();
+            showSuccessMessage('priceSuccess');
+        });
+
+        // Feedback Management
+        function loadFeedback() {
+            const feedback = JSON.parse(localStorage.getItem('feedback')) || [];
+            const container = document.getElementById('feedbackList');
+            
+            if (feedback.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center; padding: 2rem;">No feedback received yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = feedback.map((item, index) => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="feedback-name">${item.name}</span>
+                        <span class="feedback-date">${new Date(item.timestamp).toLocaleDateString()}</span>
+                    </div>
+                    <div class="feedback-email">${item.email}</div>
+                    <div class="feedback-message">${item.message}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearAllFeedback() {
+            if (confirm('Are you sure you want to clear all feedback? This action cannot be undone.')) {
+                localStorage.removeItem('feedback');
+                loadFeedback();
+            }
+        }
+
+        // Utility Functions
+        function showSuccessMessage(elementId) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const projectModal = document.getElementById('projectModal');
+            const priceModal = document.getElementById('priceModal');
+            
+            if (event.target === projectModal) {
+                closeProjectModal();
+            }
+            if (event.target === priceModal) {
+                closePriceModal();
+            }
+        }
+    </script>
+</body>
+</html>
